@@ -97,6 +97,66 @@ The application consists of 4 core components orchestrated via Docker Compose:
    - Backend API: http://localhost:8000
    - Neo4j Browser: http://localhost:7474 (use credentials `neo4j`/`cinegraph123`)
 
+## Neo4j Tutorial (Quick Start)
+
+This project ships with Neo4j already running in Docker and preloaded from `backend/movies.csv`. Use the Neo4j Browser to explore the graph and run Cypher queries.
+
+### 1) Open Neo4j Browser
+1. Visit http://localhost:7474
+2. Sign in with:
+   - Username: `neo4j`
+   - Password: `cinegraph123`
+
+### 2) Inspect the Schema
+In the Browser, run:
+```
+:schema
+```
+You should see nodes for `Movie`, `Person`, `Genre`, and `ProductionCompany`, plus relationships like `ACTED_IN`, `DIRECTED`, and `HAS_GENRE`.
+
+### 3) Try These Cypher Queries
+Count nodes and relationships:
+```
+MATCH (n) RETURN count(n) AS nodes;
+MATCH ()-[r]->() RETURN count(r) AS rels;
+```
+
+List 10 movies:
+```
+MATCH (m:Movie)
+RETURN m.original_title AS title, m.year AS year
+ORDER BY year DESC
+LIMIT 10;
+```
+
+Find actors for a movie:
+```
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie {original_title: "The Godfather"})
+RETURN p.name AS actor;
+```
+
+Find movies by actor and genre:
+```
+MATCH (p:Person {name: "Robert De Niro"})-[:ACTED_IN]->(m:Movie)-[:HAS_GENRE]->(g:Genre)
+RETURN m.original_title AS title, g.name AS genre
+ORDER BY title;
+```
+
+Discover paths between two people:
+```
+MATCH p = shortestPath(
+  (a:Person {name: "Al Pacino"})-[*..4]-(b:Person {name: "Marlon Brando"})
+)
+RETURN p;
+```
+
+### 4) Optional: Use Cypher Shell
+If you prefer the CLI:
+```
+docker compose exec neo4j cypher-shell -u neo4j -p cinegraph123
+```
+Then run the same Cypher queries shown above.
+
 ## UI Modes
 
 The chat interface includes three modes, selectable in the header toggle:
