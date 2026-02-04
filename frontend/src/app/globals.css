@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --font-display: 'Bebas Neue', 'Oswald', sans-serif;
+  --font-body: 'Sora', 'Work Sans', sans-serif;
+  --ink: #1b1b1b;
+  --ink-soft: #4a423a;
+  --accent: #e76f51;
+  --accent-2: #2a9d8f;
+  --gold: #e9c46a;
+  --paper: #fff7e6;
+  --border: rgba(24, 18, 12, 0.12);
+  --shadow: 0 20px 45px rgba(20, 15, 10, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: radial-gradient(circle at 15% 20%, rgba(231, 111, 81, 0.18), transparent 40%),
+    radial-gradient(circle at 85% 0%, rgba(42, 157, 143, 0.12), transparent 45%),
+    linear-gradient(120deg, #fff6e4 0%, #f3e6d1 45%, #e4efea 100%);
+  min-height: 100vh;
+  color: var(--ink);
+}
+
+body {
+  background-attachment: fixed;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+::selection {
+  background: rgba(231, 111, 81, 0.25);
+}
