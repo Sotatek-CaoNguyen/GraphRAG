@@ -36,6 +36,7 @@ services:
       - NEO4J_USER=neo4j
       - NEO4J_PASSWORD=cinegraph123
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL}
       - BACKEND_PORT=8000
     volumes:
       - ./backend/movies.csv:/app/movies.csv:ro

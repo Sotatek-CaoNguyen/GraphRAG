@@ -1,0 +1,17 @@
+{
+  "base_url": "http://localhost:8000",
+  "input": "eval_questions.jsonl",
+  "output": "eval_outputs.jsonl",
+  "latency_total": {
+    "count": 100.0,
+    "mean": 0.6234625859996595,
+    "p50": 0.4656844999990426,
+    "p95": 1.4690016000095056,
+    "max": 2.8171791000058874
+  },
+  "count": 100,
+  "ragas": {
+    "baseline": "None",
+    "graphrag": "None"
+  }
+}

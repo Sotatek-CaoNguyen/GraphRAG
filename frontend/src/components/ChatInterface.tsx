@@ -4,20 +4,9 @@ import { useState, useRef, useEffect, type FormEvent } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-interface ComparisonMetrics {
-  prompt_tokens: number
-  completion_tokens: number
-  total_tokens: number
-  analysis_time: number
-  retrieval_time: number
-  llm_time: number
-  tokens_per_second: number
-}
-
 interface ComparisonResult {
   answer: string
   results_count: number
-  metrics: ComparisonMetrics
 }
 
 interface ComparisonResponse {
@@ -121,15 +110,6 @@ export default function ChatInterface() {
       submitQuestion(question)
     }, 0)
   }
-
-  const renderCompareMeta = (metrics: ComparisonMetrics, resultsCount: number) => (
-    <div className="compare-meta">
-      <span>{resultsCount} results</span>
-      <span>{metrics.retrieval_time.toFixed(2)}s retrieval</span>
-      <span>{metrics.llm_time.toFixed(2)}s llm</span>
-      <span>{metrics.total_tokens} tokens</span>
-    </div>
-  )
 
   return (
     <div className="cinema-shell">
@@ -265,10 +245,9 @@ export default function ChatInterface() {
                           <h3>Baseline RAG</h3>
                           <span className="compare-pill">Keyword</span>
                         </div>
-                        {renderCompareMeta(
-                          message.comparison.baseline.metrics,
-                          message.comparison.baseline.results_count
-                        )}
+                        <div className="compare-meta">
+                          <span>{message.comparison.baseline.results_count} results</span>
+                        </div>
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {message.comparison.baseline.answer}
                         </ReactMarkdown>
@@ -278,10 +257,9 @@ export default function ChatInterface() {
                           <h3>GraphRAG</h3>
                           <span className="compare-pill accent">Graph</span>
                         </div>
-                        {renderCompareMeta(
-                          message.comparison.graphrag.metrics,
-                          message.comparison.graphrag.results_count
-                        )}
+                        <div className="compare-meta">
+                          <span>{message.comparison.graphrag.results_count} results</span>
+                        </div>
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {message.comparison.graphrag.answer}
                         </ReactMarkdown>

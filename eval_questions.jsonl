@@ -1,0 +1,100 @@
+{"id":"q001","type":"local","question":"Which Crime movies are Joe Pesci in?"}
+{"id":"q002","type":"local","question":"Which movies did Leonardo DiCaprio act in?"}
+{"id":"q003","type":"local","question":"List movies acted in by Tom Hanks."}
+{"id":"q004","type":"local","question":"Which movies did Morgan Freeman act in?"}
+{"id":"q005","type":"local","question":"Which movies did Brad Pitt act in?"}
+{"id":"q006","type":"local","question":"Which movies did Natalie Portman act in?"}
+{"id":"q007","type":"local","question":"Which movies did Scarlett Johansson act in?"}
+{"id":"q008","type":"local","question":"Which movies did Matt Damon act in?"}
+{"id":"q009","type":"local","question":"Which movies did Robert De Niro act in?"}
+{"id":"q010","type":"local","question":"Which movies did Al Pacino act in?"}
+{"id":"q011","type":"local","question":"Which movies did Christian Bale act in?"}
+{"id":"q012","type":"local","question":"Which movies did Anne Hathaway act in?"}
+{"id":"q013","type":"local","question":"Which movies did Emma Stone act in?"}
+{"id":"q014","type":"local","question":"Which movies did Meryl Streep act in?"}
+{"id":"q015","type":"local","question":"Which movies did Denzel Washington act in?"}
+{"id":"q016","type":"local","question":"Which movies did Keanu Reeves act in?"}
+{"id":"q017","type":"local","question":"Which movies did Samuel L. Jackson act in?"}
+{"id":"q018","type":"local","question":"Which movies did Harrison Ford act in?"}
+{"id":"q019","type":"local","question":"Which movies did Johnny Depp act in?"}
+{"id":"q020","type":"local","question":"Which movies did Kate Winslet act in?"}
+{"id":"q021","type":"local","question":"Which Action movies are Keanu Reeves in?"}
+{"id":"q022","type":"local","question":"Which Drama movies are Meryl Streep in?"}
+{"id":"q023","type":"local","question":"Which Comedy movies are Jim Carrey in?"}
+{"id":"q024","type":"local","question":"Which Thriller movies are Morgan Freeman in?"}
+{"id":"q025","type":"local","question":"Which Sci-Fi movies are Harrison Ford in?"}
+{"id":"q026","type":"local","question":"Which Adventure movies are Johnny Depp in?"}
+{"id":"q027","type":"local","question":"Which Romance movies are Kate Winslet in?"}
+{"id":"q028","type":"local","question":"Which Horror movies are Jamie Lee Curtis in?"}
+{"id":"q029","type":"local","question":"Which Animation movies are Tom Hanks in?"}
+{"id":"q030","type":"local","question":"Which Fantasy movies are Elijah Wood in?"}
+{"id":"q031","type":"local","question":"Which films directed by Christopher Nolan was Christian Bale in?"}
+{"id":"q032","type":"local","question":"Which films directed by Martin Scorsese was Leonardo DiCaprio in?"}
+{"id":"q033","type":"local","question":"Which films directed by Quentin Tarantino was Samuel L. Jackson in?"}
+{"id":"q034","type":"local","question":"Which films directed by Steven Spielberg was Tom Hanks in?"}
+{"id":"q035","type":"local","question":"Which films directed by Ridley Scott was Matt Damon in?"}
+{"id":"q036","type":"local","question":"Which films directed by David Fincher was Brad Pitt in?"}
+{"id":"q037","type":"local","question":"Which films directed by James Cameron was Kate Winslet in?"}
+{"id":"q038","type":"local","question":"Which films directed by Francis Ford Coppola was Al Pacino in?"}
+{"id":"q039","type":"local","question":"Which films directed by Christopher Nolan was Anne Hathaway in?"}
+{"id":"q040","type":"local","question":"Which films directed by Greta Gerwig was Saoirse Ronan in?"}
+{"id":"q041","type":"global","question":"Compare the top-rated Crime movies vs Drama movies in the dataset and summarize key differences in themes."}
+{"id":"q042","type":"global","question":"What are common themes across the highest-rated films involving both a famous director and a recurring lead actor?"}
+{"id":"q043","type":"global","question":"Summarize the most frequent genres among movies featuring Leonardo DiCaprio and explain the pattern."}
+{"id":"q044","type":"global","question":"Across movies acted in by Tom Hanks, what topics or story elements appear most often in descriptions?"}
+{"id":"q045","type":"global","question":"What movies are about Frodo, and what are the main story arcs mentioned across them?"}
+{"id":"q046","type":"global","question":"Among the movies with the highest ratings, which genres dominate and what does that suggest?"}
+{"id":"q047","type":"global","question":"Identify clusters of movies connected through shared actors and genres, and describe the clusters."}
+{"id":"q048","type":"global","question":"Which directors appear most often in the dataset, and how do their movies differ by genre and rating?"}
+{"id":"q049","type":"global","question":"Find movies that blend Crime and Thriller elements and summarize the common motifs."}
+{"id":"q050","type":"global","question":"Which movies involving Christian Bale have the highest ratings, and what themes connect them?"}
+{"id":"q051","type":"global","question":"Across movies produced by the same company, do genres or ratings show consistent patterns?"}
+{"id":"q052","type":"global","question":"What are the most common relationships between actors and genres in this graph, and what insights do they provide?"}
+{"id":"q053","type":"global","question":"Summarize how the dataset portrays 'war' across different movies and genres."}
+{"id":"q054","type":"global","question":"Summarize how the dataset portrays 'love' across different movies and genres."}
+{"id":"q055","type":"global","question":"Summarize how the dataset portrays 'revenge' across different movies and genres."}
+{"id":"q056","type":"global","question":"Summarize how the dataset portrays 'family' across different movies and genres."}
+{"id":"q057","type":"global","question":"Summarize how the dataset portrays 'friendship' across different movies and genres."}
+{"id":"q058","type":"global","question":"What patterns appear in the descriptions of top-rated Sci-Fi movies compared to top-rated Fantasy movies?"}
+{"id":"q059","type":"global","question":"Which actors appear across the widest variety of genres, and what might explain that diversity?"}
+{"id":"q060","type":"global","question":"For Crime movies, which actors are most central in the graph and what types of roles do descriptions suggest?"}
+{"id":"q061","type":"global","question":"For Drama movies, which actors are most central in the graph and what types of roles do descriptions suggest?"}
+{"id":"q062","type":"global","question":"Which directors are associated with the highest-rated movies, and what genres do they concentrate on?"}
+{"id":"q063","type":"global","question":"Compare movies directed by Christopher Nolan vs Quentin Tarantino: typical genres and description keywords."}
+{"id":"q064","type":"global","question":"Compare movies directed by Steven Spielberg vs Ridley Scott: themes and genre tendencies."}
+{"id":"q065","type":"global","question":"Which movies have descriptions emphasizing 'time' and how do they vary by genre and rating?"}
+{"id":"q066","type":"global","question":"Which movies have descriptions emphasizing 'space' and how do they vary by genre and rating?"}
+{"id":"q067","type":"global","question":"Which movies have descriptions emphasizing 'detective' and what genre patterns appear?"}
+{"id":"q068","type":"global","question":"Which movies have descriptions emphasizing 'mafia' and what genre patterns appear?"}
+{"id":"q069","type":"global","question":"Which movies have descriptions emphasizing 'robot' and what genre patterns appear?"}
+{"id":"q070","type":"global","question":"Which movies have descriptions emphasizing 'alien' and what genre patterns appear?"}
+{"id":"q071","type":"global","question":"Which movies have descriptions emphasizing 'wizard' and what genre patterns appear?"}
+{"id":"q072","type":"global","question":"Which movies have descriptions emphasizing 'vampire' and what genre patterns appear?"}
+{"id":"q073","type":"global","question":"Which movies have descriptions emphasizing 'serial killer' and what genre patterns appear?"}
+{"id":"q074","type":"global","question":"Which movies have descriptions emphasizing 'heist' and what genre patterns appear?"}
+{"id":"q075","type":"global","question":"Which movies have descriptions emphasizing 'prison' and what genre patterns appear?"}
+{"id":"q076","type":"global","question":"Which movies have descriptions emphasizing 'court' or 'trial' and what genre patterns appear?"}
+{"id":"q077","type":"global","question":"Which movies have descriptions emphasizing 'school' and how do they vary by genre?"}
+{"id":"q078","type":"global","question":"Which movies have descriptions emphasizing 'music' and how do they vary by genre and rating?"}
+{"id":"q079","type":"global","question":"Which movies have descriptions emphasizing 'dance' and how do they vary by genre and rating?"}
+{"id":"q080","type":"global","question":"Which movies have descriptions emphasizing 'dream' and how do they vary by genre?"}
+{"id":"q081","type":"global","question":"Among the highest-rated movies, what are the top recurring actors and directors?"}
+{"id":"q082","type":"global","question":"Among the lowest-rated movies, what genres and description keywords are most common?"}
+{"id":"q083","type":"global","question":"What are the key differences between high-vote and low-vote movies in terms of genre and description themes?"}
+{"id":"q084","type":"global","question":"Summarize the most common collaborations (director-actor pairs) and the genres they work in."}
+{"id":"q085","type":"global","question":"Identify movies that are described as 'based on a true story' and summarize the pattern across genres."}
+{"id":"q086","type":"global","question":"Identify movies described as 'remake' or 'reboot' and summarize how they perform by rating."}
+{"id":"q087","type":"global","question":"Find movies with themes of 'survival' and summarize common settings and genres."}
+{"id":"q088","type":"global","question":"Find movies with themes of 'betrayal' and summarize common relationship dynamics."}
+{"id":"q089","type":"global","question":"Find movies with themes of 'redemption' and summarize how they are portrayed across genres."}
+{"id":"q090","type":"global","question":"Find movies with themes of 'power' and summarize how they are portrayed across genres."}
+{"id":"q091","type":"global","question":"If you had to recommend 5 movies that best represent the Crime genre in this dataset, which would they be and why?"}
+{"id":"q092","type":"global","question":"Recommend 5 movies that best represent Sci-Fi in this dataset, and justify using the retrieved filmography."}
+{"id":"q093","type":"global","question":"Recommend 5 movies that best represent Drama in this dataset, and justify using the retrieved filmography."}
+{"id":"q094","type":"global","question":"Recommend 5 movies that best represent Comedy in this dataset, and justify using the retrieved filmography."}
+{"id":"q095","type":"global","question":"Recommend 5 movies that best represent Thriller in this dataset, and justify using the retrieved filmography."}
+{"id":"q096","type":"global","question":"Summarize the graph structure: which entity types and relationships are most important for answering queries?"}
+{"id":"q097","type":"global","question":"What are the limitations of keyword-only retrieval for this movie dataset, and which question types suffer most?"}
+{"id":"q098","type":"global","question":"Where does Graph-based retrieval help the most for this dataset, and why?"}
+{"id":"q099","type":"global","question":"For multi-hop questions, describe how a graph traversal approach reduces incorrect matches compared to keyword search."}
+{"id":"q100","type":"global","question":"Propose a hybrid retrieval strategy (vector + graph) for this dataset and explain expected benefits."}

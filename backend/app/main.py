@@ -1,6 +1,7 @@
 """FastAPI application entry point."""
 import os
 import asyncio
+import json
 from contextlib import asynccontextmanager, suppress
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,25 +30,31 @@ class HealthResponse(BaseModel):
     graph_has_data: bool
 
 
-class ComparisonMetrics(BaseModel):
-    prompt_tokens: int
-    completion_tokens: int
-    total_tokens: int
-    analysis_time: float
-    retrieval_time: float
-    llm_time: float
-    tokens_per_second: float
-
-
 class ComparisonResult(BaseModel):
     answer: str
     results_count: int
-    metrics: ComparisonMetrics
 
 
 class CompareResponse(BaseModel):
     baseline: ComparisonResult
     graphrag: ComparisonResult
+
+
+class EvalRequest(BaseModel):
+    question: str
+
+
+class EvalPipelineResult(BaseModel):
+    response_text: str
+    answer_markdown: str
+    contexts: List[str]
+    retrieved: List[Dict[str, Any]]
+
+
+class EvalCompareResponse(BaseModel):
+    question: str
+    baseline: EvalPipelineResult
+    graphrag: EvalPipelineResult
 
 
 @asynccontextmanager
@@ -181,30 +188,8 @@ def format_movies_as_markdown_table(movies: List[Dict[str, Any]]) -> str:
     return markdown
 
 
-def format_analysis_table(
-    prompt_tokens: int,
-    completion_tokens: int,
-    analysis_time: float,
-    retrieval_time: float,
-    llm_completion_time: float,
-    tokens_per_second: float,
-    analysis_label: str = "Query analysis",
-    retrieval_label: str = "Retrieval"
-) -> str:
-    """Format analysis metrics as a markdown table."""
-    markdown = "| Metric | Value |\n"
-    markdown += "|--------|-------|\n"
-    markdown += f"| Prompt tokens | {prompt_tokens} |\n"
-    markdown += f"| Completion tokens | {completion_tokens} |\n"
-    markdown += f"| Time taken for {analysis_label} (seconds) | {analysis_time:.2f} |\n"
-    markdown += f"| Time taken for {retrieval_label} (seconds) | {retrieval_time:.2f} |\n"
-    markdown += f"| Time taken for final LLM completion (seconds) | {llm_completion_time:.2f} |\n"
-    markdown += f"| Tokens/second (final completion) | {tokens_per_second:.1f} |\n"
-    return markdown
-
-
-def build_markdown_answer(response_text: str, movies: List[Dict[str, Any]], analysis_table: str) -> str:
-    """Build a markdown response with commentary, filmography, and metrics."""
+def build_markdown_answer(response_text: str, movies: List[Dict[str, Any]]) -> str:
+    """Build a markdown response with commentary and filmography."""
     markdown_parts = []
 
     markdown_parts.append("# Commentary\n")
@@ -213,12 +198,21 @@ def build_markdown_answer(response_text: str, movies: List[Dict[str, Any]], anal
 
     markdown_parts.append("# Matching Filmography\n")
     markdown_parts.append(format_movies_as_markdown_table(movies))
-    markdown_parts.append("\n")
-
-    markdown_parts.append("# Performance Stats\n")
-    markdown_parts.append(analysis_table)
 
     return "\n".join(markdown_parts)
+
+
+def build_contexts_from_records(records: List[Dict[str, Any]]) -> List[str]:
+    """
+    Convert retrieved records into a list of context strings for evaluation tools (e.g., RAGAS).
+    """
+    contexts: List[str] = []
+    for record in records:
+        try:
+            contexts.append(json.dumps(record, ensure_ascii=False))
+        except Exception:
+            contexts.append(str(record))
+    return contexts
 
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -236,31 +230,11 @@ async def chat(request: ChatRequest):
     
     try:
         # Execute GraphRAG query (returns movie_results, analysis_token_usage, analysis_time, query_time)
-        graphrag_results, analysis_token_usage, analysis_time, query_time = execute_graphrag_query(request.question)
+        graphrag_results, _, _, _ = execute_graphrag_query(request.question)
         
         # Generate natural language response (returns response_text, token_usage, elapsed_time)
-        response_text, llm_token_usage, llm_time = llm_client.generate_response(request.question, graphrag_results)
-        
-        # Combine all token usage (from term extraction + final LLM completion)
-        total_prompt_tokens = analysis_token_usage.get("prompt_tokens", 0) + llm_token_usage.get("prompt_tokens", 0)
-        total_completion_tokens = analysis_token_usage.get("completion_tokens", 0) + llm_token_usage.get("completion_tokens", 0)
-        
-        # Calculate tokens/second for final LLM completion
-        final_completion_tokens = llm_token_usage.get("completion_tokens", 0)
-        tokens_per_second = final_completion_tokens / llm_time if llm_time > 0 else 0.0
-        
-        analysis_table = format_analysis_table(
-            prompt_tokens=total_prompt_tokens,
-            completion_tokens=total_completion_tokens,
-            analysis_time=analysis_time,
-            retrieval_time=query_time,
-            llm_completion_time=llm_time,
-            tokens_per_second=tokens_per_second,
-            analysis_label="Term extraction",
-            retrieval_label="GraphRAG query"
-        )
-
-        answer = build_markdown_answer(response_text, graphrag_results, analysis_table)
+        response_text, _, _ = llm_client.generate_response(request.question, graphrag_results)
+        answer = build_markdown_answer(response_text, graphrag_results)
 
         return ChatResponse(answer=answer)
     except Exception as e:
@@ -282,29 +256,12 @@ async def baseline_chat(request: ChatRequest):
 
     try:
         baseline_results, baseline_query_time, _ = execute_baseline_rag_query(request.question)
-        response_text, llm_token_usage, llm_time = llm_client.generate_response(
+        response_text, _, _ = llm_client.generate_response(
             request.question,
             baseline_results
         )
-
-        total_prompt_tokens = llm_token_usage.get("prompt_tokens", 0)
-        total_completion_tokens = llm_token_usage.get("completion_tokens", 0)
-        tokens_per_second = (
-            total_completion_tokens / llm_time if llm_time > 0 else 0.0
-        )
-
-        analysis_table = format_analysis_table(
-            prompt_tokens=total_prompt_tokens,
-            completion_tokens=total_completion_tokens,
-            analysis_time=0.0,
-            retrieval_time=baseline_query_time,
-            llm_completion_time=llm_time,
-            tokens_per_second=tokens_per_second,
-            analysis_label="Baseline analysis",
-            retrieval_label="Baseline retrieval"
-        )
-
-        answer = build_markdown_answer(response_text, baseline_results, analysis_table)
+        _ = baseline_query_time  # kept for possible future instrumentation
+        answer = build_markdown_answer(response_text, baseline_results)
         return ChatResponse(answer=answer)
     except Exception as e:
         print(f"Error processing baseline request: {e}")
@@ -325,88 +282,89 @@ async def compare(request: ChatRequest):
 
     try:
         baseline_results, baseline_query_time, _ = execute_baseline_rag_query(request.question)
-        baseline_text, baseline_token_usage, baseline_llm_time = llm_client.generate_response(
+        baseline_text, _, _ = llm_client.generate_response(
             request.question,
             baseline_results
         )
-        baseline_prompt_tokens = baseline_token_usage.get("prompt_tokens", 0)
-        baseline_completion_tokens = baseline_token_usage.get("completion_tokens", 0)
-        baseline_total_tokens = baseline_prompt_tokens + baseline_completion_tokens
-        baseline_tokens_per_second = (
-            baseline_completion_tokens / baseline_llm_time if baseline_llm_time > 0 else 0.0
-        )
-        baseline_table = format_analysis_table(
-            prompt_tokens=baseline_prompt_tokens,
-            completion_tokens=baseline_completion_tokens,
-            analysis_time=0.0,
-            retrieval_time=baseline_query_time,
-            llm_completion_time=baseline_llm_time,
-            tokens_per_second=baseline_tokens_per_second,
-            analysis_label="Baseline analysis",
-            retrieval_label="Baseline retrieval"
-        )
-        baseline_answer = build_markdown_answer(baseline_text, baseline_results, baseline_table)
+        _ = baseline_query_time  # kept for possible future instrumentation
+        baseline_answer = build_markdown_answer(baseline_text, baseline_results)
 
-        graphrag_results, analysis_token_usage, analysis_time, query_time = execute_graphrag_query(
+        graphrag_results, _, _, _ = execute_graphrag_query(
             request.question
         )
-        graphrag_text, llm_token_usage, llm_time = llm_client.generate_response(
+        graphrag_text, _, _ = llm_client.generate_response(
             request.question,
             graphrag_results
         )
-        graphrag_prompt_tokens = analysis_token_usage.get("prompt_tokens", 0) + llm_token_usage.get(
-            "prompt_tokens", 0
-        )
-        graphrag_completion_tokens = analysis_token_usage.get(
-            "completion_tokens", 0
-        ) + llm_token_usage.get("completion_tokens", 0)
-        graphrag_total_tokens = graphrag_prompt_tokens + graphrag_completion_tokens
-        graphrag_tokens_per_second = (
-            llm_token_usage.get("completion_tokens", 0) / llm_time if llm_time > 0 else 0.0
-        )
-        graphrag_table = format_analysis_table(
-            prompt_tokens=graphrag_prompt_tokens,
-            completion_tokens=graphrag_completion_tokens,
-            analysis_time=analysis_time,
-            retrieval_time=query_time,
-            llm_completion_time=llm_time,
-            tokens_per_second=graphrag_tokens_per_second,
-            analysis_label="Term extraction",
-            retrieval_label="GraphRAG query"
-        )
-        graphrag_answer = build_markdown_answer(graphrag_text, graphrag_results, graphrag_table)
+        graphrag_answer = build_markdown_answer(graphrag_text, graphrag_results)
 
         return CompareResponse(
             baseline=ComparisonResult(
                 answer=baseline_answer,
-                results_count=len(baseline_results),
-                metrics=ComparisonMetrics(
-                    prompt_tokens=baseline_prompt_tokens,
-                    completion_tokens=baseline_completion_tokens,
-                    total_tokens=baseline_total_tokens,
-                    analysis_time=0.0,
-                    retrieval_time=baseline_query_time,
-                    llm_time=baseline_llm_time,
-                    tokens_per_second=baseline_tokens_per_second
-                )
+                results_count=len(baseline_results)
             ),
             graphrag=ComparisonResult(
                 answer=graphrag_answer,
-                results_count=len(graphrag_results),
-                metrics=ComparisonMetrics(
-                    prompt_tokens=graphrag_prompt_tokens,
-                    completion_tokens=graphrag_completion_tokens,
-                    total_tokens=graphrag_total_tokens,
-                    analysis_time=analysis_time,
-                    retrieval_time=query_time,
-                    llm_time=llm_time,
-                    tokens_per_second=graphrag_tokens_per_second
-                )
+                results_count=len(graphrag_results)
             )
         )
     except Exception as e:
         print(f"Error processing comparison request: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
+
+
+@app.post("/api/eval/baseline", response_model=EvalPipelineResult)
+async def eval_baseline(request: EvalRequest):
+    """Evaluation-friendly baseline endpoint returning contexts and retrieved items."""
+    if not request.question or not request.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+
+    if not db.driver:
+        try:
+            db.connect()
+        except Exception as e:
+            raise HTTPException(status_code=503, detail=f"Database connection failed: {e}")
+
+    baseline_results, _, _ = execute_baseline_rag_query(request.question)
+    response_text, _, _ = llm_client.generate_response(request.question, baseline_results)
+    answer_markdown = build_markdown_answer(response_text, baseline_results)
+    return EvalPipelineResult(
+        response_text=response_text,
+        answer_markdown=answer_markdown,
+        contexts=build_contexts_from_records(baseline_results),
+        retrieved=baseline_results
+    )
+
+
+@app.post("/api/eval/graphrag", response_model=EvalPipelineResult)
+async def eval_graphrag(request: EvalRequest):
+    """Evaluation-friendly GraphRAG endpoint returning contexts and retrieved items."""
+    if not request.question or not request.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+
+    if not db.driver:
+        try:
+            db.connect()
+        except Exception as e:
+            raise HTTPException(status_code=503, detail=f"Database connection failed: {e}")
+
+    graphrag_results, _, _, _ = execute_graphrag_query(request.question)
+    response_text, _, _ = llm_client.generate_response(request.question, graphrag_results)
+    answer_markdown = build_markdown_answer(response_text, graphrag_results)
+    return EvalPipelineResult(
+        response_text=response_text,
+        answer_markdown=answer_markdown,
+        contexts=build_contexts_from_records(graphrag_results),
+        retrieved=graphrag_results
+    )
+
+
+@app.post("/api/eval/compare", response_model=EvalCompareResponse)
+async def eval_compare(request: EvalRequest):
+    """Evaluation-friendly compare endpoint returning both pipelines with contexts."""
+    baseline = await eval_baseline(request)
+    graphrag = await eval_graphrag(request)
+    return EvalCompareResponse(question=request.question, baseline=baseline, graphrag=graphrag)
 
 @app.get("/")
 async def root():

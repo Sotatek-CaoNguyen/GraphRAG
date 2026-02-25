@@ -76,6 +76,7 @@ The application consists of 4 core components orchestrated via Docker Compose:
    Create a file named `.env` in the root of the project directory and add your OpenRouter API key:
    ```
    OPENROUTER_API_KEY="your_openrouter_api_key_here"
+   OPENROUTER_MODEL="google/gemini-2.0-flash-001"
    ```
    The `docker-compose.yml` file is configured to read this file.
 
@@ -256,6 +257,53 @@ Response:
 }
 ```
 
+## Evaluation (RAGAS)
+
+This project includes evaluation-friendly JSON endpoints that return explicit `contexts` for Baseline and GraphRAG, suitable for running RAGAS or other offline evaluators.
+
+Endpoints:
+- `POST /api/eval/baseline`
+- `POST /api/eval/graphrag`
+- `POST /api/eval/compare`
+
+Example:
+```bash
+curl -X POST http://localhost:8000/api/eval/compare \
+  -H "Content-Type: application/json" \
+  -d "{\"question\":\"Which Crime movies are Joe Pesci in?\"}"
+```
+
+Batch run (writes `eval_outputs.jsonl` + `eval_summary.json`):
+```bash
+pip install -r backend/requirements-eval.txt
+python backend/eval/run_eval.py --input eval_questions.jsonl --ragas
+```
+
+If you are using the local `venv/` in this repo, run:
+```powershell
+venv\Scripts\python.exe backend/eval/run_eval.py --input eval_questions.jsonl --ragas
+```
+
+First-time smoke test (faster):
+```powershell
+venv\Scripts\python.exe backend/eval/run_eval.py --input eval_questions.jsonl --limit 10 --ragas
+```
+
+RAGAS needs an LLM and (optionally) embeddings provider. `run_eval.py` will read `OPENROUTER_API_KEY` from `.env` automatically, but you can also set OpenAI-compatible env vars (useful when you want to override models):
+```powershell
+$env:OPENAI_API_KEY = "<your_openrouter_api_key>"
+$env:OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
+$env:OPENAI_MODEL = "google/gemini-3-flash-preview"
+$env:OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
+```
+
+Input format (`eval_questions.jsonl`, one JSON per line):
+```jsonl
+{"id":"q1","type":"local","question":"Which Crime movies are Joe Pesci in?"}
+{"id":"q2","type":"global","question":"Which films directed by Christopher Nolan was Christian Bale in?"}
+{"id":"q3","type":"global","question":"What movies are about Frodo?","ground_truth":"...optional reference answer..."}
+```
+
 ## Configuration
 
 ### Environment Variables
@@ -265,6 +313,7 @@ Backend:
 - NEO4J_USER: Neo4j username (default: `neo4j`)
 - NEO4J_PASSWORD: Neo4j password (default: `cinegraph123`)
 - OPENROUTER_API_KEY: API key for OpenRouter (read from `.env`).
+- OPENROUTER_MODEL: OpenRouter model slug (example: `google/gemini-3-flash-preview`).
 
 Frontend:
 - BACKEND_URL: Backend API URL (default: `http://backend:8000`)
